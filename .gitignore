@@ -8,5 +8,6 @@
 *.pyc
 
 # package directories
+build
 dist
 src/MANIFEST
