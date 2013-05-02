@@ -35,6 +35,15 @@ Conditional logging:
 	@log_enter('This is going to fail.', condition='b == 0')
 	def divide(a, b):
 	    return a / b
+
+Log exit:
+
+        from loggingd import log_exit
+
+        @log_exit('This is going to log on return and on exception.')
+        def divide(a, b):
+            return a / b
+
 	    
 Installation
 ============
