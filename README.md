@@ -38,13 +38,12 @@ Conditional logging:
 
 Log exit:
 
-        from loggingd import log_exit
+	from loggingd import log_exit
 
-        @log_exit('This is going to log on return and on exception.')
-        def divide(a, b):
-            return a / b
+	@log_exit('This is going to log on return and on exception.')
+	def divide(a, b):
+	    return a / b
 
-	    
 Installation
 ============
 pip install loggingd
