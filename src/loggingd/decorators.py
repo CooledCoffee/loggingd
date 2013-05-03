@@ -1,24 +1,24 @@
 # -*- coding: UTF-8 -*-
 from decorated import Function
-from logging import DEBUG, INFO, WARN, ERROR, CRITICAL
 import doctest
 import logging
 import re
 
+LEVEL_MAPPING = {
+    'DEBUG' : logging.DEBUG,
+    'INFO' : logging.INFO,
+    'WARN' : logging.WARN,
+    'ERROR' : logging.ERROR,
+    'CRITICAL' : logging.CRITICAL,
+    'D' : logging.DEBUG,
+    'I' : logging.INFO,
+    'W' : logging.WARN,
+    'E' : logging.ERROR,
+    'C' : logging.CRITICAL,
+}
+
 class LogDecorator(Function):
-    DEFAULT_LEVEL = INFO
-    LEVEL_MAPPING = {
-            'DEBUG' : DEBUG,
-            'INFO' : INFO,
-            'WARN' : WARN,
-            'ERROR' : ERROR,
-            'CRITICAL' : CRITICAL,
-            'D' : DEBUG,
-            'I' : INFO,
-            'W' : WARN,
-            'E' : ERROR,
-            'C' : CRITICAL,
-    }
+    default_level = logging.INFO
     
     def __init__(self, expression, condition='True', **kw):
         super(LogDecorator, self).__init__()
@@ -71,9 +71,9 @@ class LogDecorator(Function):
     def _parse_expression(self, expression):
         match = re.match('\\[(\\w+)\\](.*)', expression)
         if not match:
-            return self.DEFAULT_LEVEL, expression.strip()
+            return self.default_level, expression.strip()
         level, msg = match.groups()
-        level = LogDecorator.LEVEL_MAPPING.get(level.upper(), WARN)
+        level = LEVEL_MAPPING.get(level.upper(), logging.WARN)
         msg = msg.strip()
         return level, msg
         
@@ -83,28 +83,26 @@ class log_enter(LogDecorator):
         return super(log_enter, self)._call(*args, **kw)
     
 class log_exit(LogDecorator):
-    LOG_ON_RETURN = True
-    LOG_ON_ERROR = True
+    log_on_return = True
+    log_on_error = True
     
     def _call(self, *args, **kw):
         try:
             ret = super(log_exit, self)._call(*args, **kw)
-            if self.LOG_ON_RETURN:
+            if self.log_on_return:
                 self._log(ret, None, *args, **kw)
             return ret
         except Exception as e:
-            if self.LOG_ON_ERROR:
+            if self.log_on_error:
                 self._log(None, e, *args, **kw)
             raise
     
 class log_return(log_exit):
-    LOG_ON_RETURN = True
-    LOG_ON_ERROR = False
+    log_on_error = False
     
 class log_error(log_exit):
-    LOG_ON_RETURN = False
-    LOG_ON_ERROR = True
-    DEFAULT_LEVEL = WARN
+    log_on_return = False
+    default_level = logging.WARN
 
 if __name__ == '__main__':
     doctest.testmod()
