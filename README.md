@@ -28,6 +28,16 @@ Using loggingd:
 	def divide(a, b):
 	    return a / b
 	    
+Specify logging level:
+
+	from loggingd import log_enter, log_return, log_error
+	
+	@log_enter('[INFO] Calculating {a} / {b} ...')
+	@log_return('[DEBUG] Result is {ret}.')
+	@log_error('[ERROR] Failed to calc. Error is "{e}".', exc_info=True)
+	def divide(a, b):
+	    return a / b
+	    
 Conditional logging:
 
 	from loggingd import log_enter
