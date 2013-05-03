@@ -4,25 +4,12 @@ import doctest
 import logging
 import re
 
-LEVEL_MAPPING = {
-    'DEBUG' : logging.DEBUG,
-    'INFO' : logging.INFO,
-    'WARN' : logging.WARN,
-    'ERROR' : logging.ERROR,
-    'CRITICAL' : logging.CRITICAL,
-    'D' : logging.DEBUG,
-    'I' : logging.INFO,
-    'W' : logging.WARN,
-    'E' : logging.ERROR,
-    'C' : logging.CRITICAL,
-}
-
 class LogDecorator(Function):
     default_level = logging.INFO
     
     def __init__(self, expression, condition='True', **kw):
         super(LogDecorator, self).__init__()
-        self._level, self._msg = self._parse_expression(expression)
+        self._level, self._msg = _parse_expression(expression, self.default_level)
         self._condition = condition
         self._extra_kw = kw
             
@@ -45,15 +32,6 @@ class LogDecorator(Function):
             logger = logging.getLogger(self.__module__)
             logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'))
                 
-    def _parse_expression(self, expression):
-        match = re.match('\\[(\\w+)\\](.*)', expression)
-        if not match:
-            return self.default_level, expression.strip()
-        level, msg = match.groups()
-        level = LEVEL_MAPPING.get(level.upper(), logging.WARN)
-        msg = msg.strip()
-        return level, msg
-        
 class log_enter(LogDecorator):
     def _call(self, *args, **kw):
         self._log(None, None, *args, **kw)
@@ -104,6 +82,39 @@ def _evaluate_message(msg, d):
         except:
             return '{error:%s}' % expression
     return VARIABLE_TEMPLATE.sub(_evaluate, msg)
+    
+LEVEL_MAPPING = {
+    'DEBUG' : logging.DEBUG,
+    'INFO' : logging.INFO,
+    'WARN' : logging.WARN,
+    'ERROR' : logging.ERROR,
+    'CRITICAL' : logging.CRITICAL,
+    'D' : logging.DEBUG,
+    'I' : logging.INFO,
+    'W' : logging.WARN,
+    'E' : logging.ERROR,
+    'C' : logging.CRITICAL,
+}
+MESSAGE_TEMPLATE = re.compile('\\[(\\w+)\\](.*)')
+def _parse_expression(expression, default_level):
+    '''
+    >>> _parse_expression('aaa', logging.INFO)
+    (20, 'aaa')
+    >>> _parse_expression('[WARN] aaa', logging.INFO)
+    (30, 'aaa')
+    >>> _parse_expression('[W] aaa', logging.INFO)
+    (30, 'aaa')
+    >>> _parse_expression('[UNKNOWN] aaa', logging.INFO)
+    (30, 'aaa')
+    '''
+    match = MESSAGE_TEMPLATE.match(expression)
+    if not match:
+        return default_level, expression.strip()
+    
+    level, msg = match.groups()
+    level = LEVEL_MAPPING.get(level.upper(), logging.WARN)
+    msg = msg.strip()
+    return level, msg
     
 if __name__ == '__main__':
     doctest.testmod()

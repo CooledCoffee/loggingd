@@ -8,27 +8,6 @@ import loggingd
 
 def foo(id, name='default name'):
     return id
-
-class ParseExpressionTest(TestCase):
-    def test_no_level(self):
-        l = LogDecorator('aaa')
-        self.assertEquals(logging.INFO, l._level)
-        self.assertEquals('aaa', l._msg)
-        
-    def test_with_level(self):
-        l = LogDecorator('[WARN] aaa')
-        self.assertEquals(logging.WARN, l._level)
-        self.assertEquals('aaa', l._msg)
-        
-    def test_with_abbreved_level(self):
-        l = LogDecorator('[W] aaa')
-        self.assertEquals(logging.WARN, l._level)
-        self.assertEquals('aaa', l._msg)
-        
-    def test_invalid_level(self):
-        l = LogDecorator('[abc] aaa')
-        self.assertEquals(logging.WARN, l._level)
-        self.assertEquals('aaa', l._msg)
         
 class EvaluateExpressions(TestCase):
     def test_no_condition(self):
