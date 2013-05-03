@@ -35,33 +35,10 @@ class LogDecorator(Function):
         except:
             return True, 'Invalid condition: %s.' % self._condition
         if condition:
-            return True, self._evaluate_message(d)
+            return True, _evaluate_message(self._msg, d)
         else:
             return False, None
     
-    def _evaluate_message(self, variables):
-        '''
-        >>> from loggingd.util import Dict
-        >>> LogDecorator('aaa')._evaluate_message({})
-        'aaa'
-        >>> LogDecorator('Id is {id}.')._evaluate_message({'id':1})
-        'Id is 1.'
-        >>> LogDecorator('Id is {user.id}.')._evaluate_message({'user':Dict(id=1)})
-        'Id is 1.'
-        >>> LogDecorator('Id is {user.id}.')._evaluate_message({'user':Dict(id=1)})
-        'Id is 1.'
-        >>> LogDecorator('Id is {!@#$%}.')._evaluate_message({})
-        'Id is {error:!@#$%}.'
-        '''
-        def _evaluate(matcher):
-            expression = matcher.group(1)
-            try:
-                value = eval(expression, variables)
-                return str(value)
-            except:
-                return '{error:%s}' % expression
-        return re.sub('\\{(.+?)\\}', _evaluate, self._msg)
-                
     def _log(self, ret, e, *args, **kw):
         condition, msg = self._evaluate_expressions(ret, e, *args, **kw)
         if condition:
@@ -104,6 +81,30 @@ class log_error(log_exit):
     log_on_return = False
     default_level = logging.WARN
 
+VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
+def _evaluate_message(msg, d):
+    '''
+    >>> from loggingd.util import Dict
+    >>> _evaluate_message('aaa', {})
+    'aaa'
+    >>> _evaluate_message('Id is {id}.', {'id':1})
+    'Id is 1.'
+    >>> _evaluate_message('Id is {user.id}.', {'user':Dict(id=1)})
+    'Id is 1.'
+    >>> _evaluate_message('Id is {user.id}.', {'user':Dict(id=1)})
+    'Id is 1.'
+    >>> _evaluate_message('Id is {!@#$%}.', {})
+    'Id is {error:!@#$%}.'
+    '''
+    def _evaluate(matcher):
+        expression = matcher.group(1)
+        try:
+            value = eval(expression, d)
+            return str(value)
+        except:
+            return '{error:%s}' % expression
+    return VARIABLE_TEMPLATE.sub(_evaluate, msg)
+    
 if __name__ == '__main__':
     doctest.testmod()
     
