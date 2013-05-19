@@ -33,8 +33,8 @@ class Dict(dict):
     def __getattr__(self, key):
         try:
             return self[key]
-        except KeyError, k:
-            raise AttributeError(k)
+        except KeyError as e:
+            raise AttributeError(str(e))
     
     def __setattr__(self, key, value): 
         self[key] = value
@@ -42,14 +42,13 @@ class Dict(dict):
     def __delattr__(self, key):
         try:
             del self[key]
-        except KeyError, k:
-            raise AttributeError(k)
+        except KeyError as e:
+            raise AttributeError(str(e))
         
 def disable_module_log(module_name):
     global _MODULE_BLACKLIST, _PATH_BLACKLIST
     _MODULE_BLACKLIST.add(module_name)
     _PATH_BLACKLIST = {importlib.import_module(mod).__file__ for mod in _MODULE_BLACKLIST}
-    _PATH_BLACKLIST = {path.rstrip('c') for path in _PATH_BLACKLIST} # replace .pyc with .py
     
 def patch_logging():
     old_log = Logger._log

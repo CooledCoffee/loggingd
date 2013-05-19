@@ -61,3 +61,7 @@ pip install loggingd
 or 
 
 easy_install loggingd
+
+Python3 Support
+===============
+Loggingd is tested under python 2.7 and python 3.3.
