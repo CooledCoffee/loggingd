@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='loggingd',
-    version='1.0.2',
+    version='1.0.3',
     author='Mengchen LEE',
     author_email='CooledCoffee@gmail.com',
     classifiers = [
