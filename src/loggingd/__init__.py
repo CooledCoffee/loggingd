@@ -6,6 +6,18 @@ from loggingd.decorators import log_enter, log_return, log_error
 from loggingd.util import disable_module_log
 import logging
 
+DEBUG = DEBUG
+INFO = INFO
+WARN = WARN
+ERROR = ERROR
+CRITICAL = CRITICAL
+
+disable_module_log = disable_module_log
+getLogger = getLogger
+log_enter = log_enter
+log_error = log_error
+log_return = log_return
+
 def add_console_handler(level, fmt='%(message)s'):
     handler = logging.StreamHandler()
     handler.setLevel(level)
