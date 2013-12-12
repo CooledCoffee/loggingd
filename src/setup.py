@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='loggingd',
-    version='1.0.4',
+    version='1.1.1',
     author='Mengchen LEE',
     author_email='CooledCoffee@gmail.com',
     classifiers = [
@@ -20,6 +20,6 @@ setup(
     packages=['loggingd'],
     url='https://github.com/CooledCoffee/loggingd/',
     install_requires=[
-        'decorated >= 1.0.0',
+        'decorated >= 1.2.0',
     ],
 )
