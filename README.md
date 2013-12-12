@@ -9,7 +9,7 @@ easy_install loggingd
 Introduction
 ============
 
-Loggingd is based on decorated (<a href="https://github.com/CooledCoffee/decorated" target="_blank">https://github.com/CooledCoffee/decorated</a>).
+Loggingd is based on decorated (https://github.com/CooledCoffee/decorated).
 
 Code without logging:
 
