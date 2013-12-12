@@ -1,5 +1,16 @@
+Installation
+============
+pip install loggingd
+
+or 
+
+easy_install loggingd
+
 Introduction
 ============
+
+Loggingd is based on decorated (<a href="https://github.com/CooledCoffee/decorated" target="_blank">https://github.com/CooledCoffee/decorated</a>).
+
 Code without logging:
 
 	def divide(a, b):
@@ -53,14 +64,6 @@ Log exit:
 	@log_exit('This is going to log on return and on exception.')
 	def divide(a, b):
 	    return a / b
-
-Installation
-============
-pip install loggingd
-
-or 
-
-easy_install loggingd
 
 Python3 Support
 ===============
