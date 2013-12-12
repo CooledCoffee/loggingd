@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from decorated import function
+from decorated.base import function
 from loggingd import util
 from loggingd.util import Dict
 from unittest.case import TestCase
-import importlib
 import loggingd
 import os
 

@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
-from decorated import Function
+from decorated.base import function
+from decorated.decorators import events
 from logging import getLogger, DEBUG, INFO, WARN, ERROR, CRITICAL
 from loggingd import util
 from loggingd.decorators import log_enter, log_return, log_error
@@ -34,6 +35,7 @@ def add_file_handler(level, path, fmt='[%(asctime)s] [%(levelname)s] [%(process)
 def init(level=logging.INFO):
     logging.getLogger().setLevel(level)
     util.patch_logging()
-    disable_module_log(Function.__module__) #@UndefinedVariable
+    disable_module_log(function.__name__)
+    disable_module_log(events.__name__)
     disable_module_log('loggingd.decorators')
     
