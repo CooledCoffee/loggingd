@@ -3,7 +3,7 @@ from decorated.base import function
 from decorated.decorators import events
 from logging import getLogger, DEBUG, INFO, WARN, ERROR, CRITICAL
 from loggingd import util
-from loggingd.decorators import log_enter, log_return, log_error
+from loggingd.decorators import log_enter, log_return, log_error,log_exit
 from loggingd.util import disable_module_log
 import logging
 
