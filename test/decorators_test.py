@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from loggingd.decorators import LogDecorator, log_enter, log_exit, log_return, \
-    log_error
+from loggingd.decorators import Log, LogEnter, LogExit, LogReturn, LogError
 from loggingd.util import Dict
 from unittest.case import TestCase
 import logging
@@ -11,41 +10,41 @@ def foo(id, name='default name'):
         
 class EvaluateExpressions(TestCase):
     def test_no_condition(self):
-        decorated = LogDecorator('aaa')(foo)
+        decorated = Log('aaa')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertTrue(condition)
         self.assertEquals('aaa', msg)
         
     def test_condition_true(self):
-        decorated = LogDecorator('aaa', '1 == 1')(foo)
+        decorated = Log('aaa', '1 == 1')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertTrue(condition)
         self.assertEquals('aaa', msg)
         
     def test_condition_false(self):
-        decorated = LogDecorator('aaa', '1 == 2')(foo)
+        decorated = Log('aaa', '1 == 2')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertFalse(condition)
         self.assertIsNone(msg)
         
     def test_extra_kw_in_condition(self):
-        decorated = LogDecorator('aaa', 'ret')(foo)
+        decorated = Log('aaa', 'ret')(foo)
         condition, _ = decorated._evaluate_expressions([1], {'name': 'my name'}, {'ret': True})
         self.assertTrue(condition)
         
     def test_extra_kw_in_msg(self):
-        decorated = LogDecorator('aaa {ret} bbb')(foo)
+        decorated = Log('aaa {ret} bbb')(foo)
         _, msg = decorated._evaluate_expressions('111', None, 1, name='my name')
         self.assertEquals('aaa 111 bbb', msg)
         
     def test_bad_condition(self):
-        decorated = LogDecorator('aaa', '!@#$%')(foo)
+        decorated = Log('aaa', '!@#$%')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertTrue(condition)
         self.assertEquals('Invalid condition: !@#$%.', msg)
         
     def test_bad_msg(self):
-        decorated = LogDecorator('aaa {bbb} ccc')(foo)
+        decorated = Log('aaa {bbb} ccc')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertTrue(condition)
         self.assertEquals('aaa {error:bbb} ccc', msg)
@@ -70,7 +69,7 @@ class BaseLoggerTest(TestCase):
 class LogTest(BaseLoggerTest):
     def test_simple(self):
         # test
-        decorated = LogDecorator('{id}')(foo)
+        decorated = Log('{id}')(foo)
         decorated._log(None, None, 1)
             
         # verify
@@ -80,7 +79,7 @@ class LogTest(BaseLoggerTest):
         self.assertIsNone(self.logs[0].exc_info)
              
     def test_exc_info(self):
-        decorated = LogDecorator('{id}', exc_info=True)(foo)
+        decorated = Log('{id}', exc_info=True)(foo)
         try:
             raise Exception()
         except:
@@ -95,7 +94,7 @@ class LogTest(BaseLoggerTest):
 class LogEnterTest(BaseLoggerTest):
     def test_simple(self):
         # test
-        @log_enter('aaa')
+        @LogEnter('aaa')
         def _foo():
             return 1
         ret = _foo()
@@ -107,8 +106,8 @@ class LogEnterTest(BaseLoggerTest):
         self.assertEquals('aaa', self.logs[0].msg)
          
     def test_multi(self):
-        @log_enter('aaa')
-        @log_enter('bbb')
+        @LogEnter('aaa')
+        @LogEnter('bbb')
         def _foo():
             pass
         _foo()
@@ -122,8 +121,8 @@ class LogEnterTest(BaseLoggerTest):
              
     def test_conditional(self):
         # test
-        @log_enter('aaa', 'id==111')
-        @log_enter('bbb', 'id==222')
+        @LogEnter('aaa', 'id==111')
+        @LogEnter('bbb', 'id==222')
         def _foo(id):
             pass
         _foo(222)
@@ -136,7 +135,7 @@ class LogEnterTest(BaseLoggerTest):
 class LogExitTest(BaseLoggerTest):
     def test_return(self):
         # test
-        @log_exit('aaa')
+        @LogExit('aaa')
         def _foo(id):
             return 1
         ret = _foo(111)
@@ -149,7 +148,7 @@ class LogExitTest(BaseLoggerTest):
          
     def test_error(self):
         # test
-        @log_exit('aaa')
+        @LogExit('aaa')
         def _foo(id):
             raise Exception()
         with self.assertRaises(Exception):
@@ -163,7 +162,7 @@ class LogExitTest(BaseLoggerTest):
 class LogReturnTest(BaseLoggerTest):
     def test_success(self):
         # test
-        @log_return('Id is {id}, return is {ret}.')
+        @LogReturn('Id is {id}, return is {ret}.')
         def _foo(id):
             return 1
         _foo(111)
@@ -175,7 +174,7 @@ class LogReturnTest(BaseLoggerTest):
              
     def test_error(self):
         # test
-        @log_return('aaa')
+        @LogReturn('aaa')
         def _foo(id):
             raise Exception()
         with self.assertRaises(Exception):
@@ -187,7 +186,7 @@ class LogReturnTest(BaseLoggerTest):
 class LogErrorTest(BaseLoggerTest):
     def test_success(self):
         # test
-        @log_error('aaa')
+        @LogError('aaa')
         def _foo(id):
             return 1
         _foo(111)
@@ -197,7 +196,7 @@ class LogErrorTest(BaseLoggerTest):
              
     def test_error(self):
         # test
-        @log_error('Id is {id}, error is {e}.', exc_info=True)
+        @LogError('Id is {id}, error is {e}.', exc_info=True)
         def _foo(id):
             raise Exception('aaa')
         with self.assertRaises(Exception):

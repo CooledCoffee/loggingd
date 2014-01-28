@@ -4,11 +4,11 @@ import doctest
 import logging
 import re
 
-class LogDecorator(Function):
+class Log(Function):
     default_level = logging.INFO
     
     def __init__(self, expression, condition='True', **kw):
-        super(LogDecorator, self).__init__()
+        super(Log, self).__init__()
         self._level, self._msg = _parse_expression(expression, self.default_level)
         self._condition = condition
         self._extra_kw = kw
@@ -32,18 +32,18 @@ class LogDecorator(Function):
             logger = logging.getLogger(self.__module__)
             logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'))
                 
-class log_enter(LogDecorator):
+class LogEnter(Log):
     def _call(self, *args, **kw):
         self._log(None, None, *args, **kw)
-        return super(log_enter, self)._call(*args, **kw)
+        return super(LogEnter, self)._call(*args, **kw)
     
-class log_exit(LogDecorator):
+class LogExit(Log):
     log_on_return = True
     log_on_error = True
     
     def _call(self, *args, **kw):
         try:
-            ret = super(log_exit, self)._call(*args, **kw)
+            ret = super(LogExit, self)._call(*args, **kw)
             if self.log_on_return:
                 self._log(ret, None, *args, **kw)
             return ret
@@ -52,10 +52,10 @@ class log_exit(LogDecorator):
                 self._log(None, e, *args, **kw)
             raise
     
-class log_return(log_exit):
+class LogReturn(LogExit):
     log_on_error = False
     
-class log_error(log_exit):
+class LogError(LogExit):
     log_on_return = False
     default_level = logging.WARN
 
