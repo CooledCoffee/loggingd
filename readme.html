@@ -1,0 +1,96 @@
+<h1>Installation</h1>
+
+<p>pip install loggingd</p>
+
+<p>or </p>
+
+<p>easy_install loggingd</p>
+
+<h1>Introduction</h1>
+
+<p>Loggingd is based on decorated (https://github.com/CooledCoffee/decorated).</p>
+
+<p>Code without logging:</p>
+
+<pre><code>def divide(a, b):
+    return a / b
+</code></pre>
+
+<p>Old style logging:</p>
+
+<pre><code>import logging
+
+def divide(a, b):
+    logging.info('Calculating %d / %d ...' % (a, b))
+    try:
+        result = a / b
+        logging.info('Result is %d.' % result)
+    except Exception as e:
+        logging.warn('Failed to calc. Error is "%s".' % e, exc_info=True)
+        raise
+
+logging.getLogger().setLevel(logging.DEBUG)
+logging.basicConfig()
+divide(2, 1)
+</code></pre>
+
+<p>Using loggingd:</p>
+
+<pre><code>from loggingd import log_enter, log_return, log_error
+import loggingd
+
+@log_enter('Calculating {a} / {b} ...')
+@log_return('Result is {ret}.')
+@log_error('Failed to calc. Error is "{e}".', exc_info=True)
+def divide(a, b):
+    return a / b
+
+loggingd.init(loggingd.DEBUG)
+loggingd.add_console_handler(loggingd.DEBUG)
+divide(2, 1)
+</code></pre>
+
+<p>Specify logging level:</p>
+
+<pre><code>from loggingd import log_enter, log_return, log_error
+
+@log_enter('[INFO] Calculating {a} / {b} ...')
+@log_return('[DEBUG] Result is {ret}.')
+@log_error('[ERROR] Failed to calc. Error is "{e}".', exc_info=True)
+def divide(a, b):
+    return a / b
+
+loggingd.init(loggingd.DEBUG)
+loggingd.add_console_handler(loggingd.DEBUG)
+divide(2, 1)
+</code></pre>
+
+<p>Conditional logging:</p>
+
+<pre><code>from loggingd import log_enter
+
+@log_enter('This is going to fail.', condition='b == 0')
+def divide(a, b):
+    return a / b
+
+loggingd.init(loggingd.DEBUG)
+loggingd.add_console_handler(loggingd.DEBUG)
+divide(2, 0)
+</code></pre>
+
+<p>Log exit:</p>
+
+<pre><code>from loggingd import log_exit
+
+@log_exit('This is going to log on return and on exception.')
+def divide(a, b):
+    return a / b
+
+loggingd.init(loggingd.DEBUG)
+loggingd.add_console_handler(loggingd.DEBUG)
+divide(2, 1)
+</code></pre>
+
+<h1>Python3 Support</h1>
+
+<p>Loggingd is tested under python 2.7 and python 3.3.</p>

@@ -20,7 +20,7 @@ Old style logging:
 
 	import logging
 	
-	def divide(a, b)
+	def divide(a, b):
 	    logging.info('Calculating %d / %d ...' % (a, b))
 	    try:
 	        result = a / b
@@ -29,16 +29,25 @@ Old style logging:
 	        logging.warn('Failed to calc. Error is "%s".' % e, exc_info=True)
 	        raise
 	
+	logging.getLogger().setLevel(logging.DEBUG)
+	logging.basicConfig()
+	divide(2, 1)
+	
 Using loggingd:
 
 	from loggingd import log_enter, log_return, log_error
+	import loggingd
 	
 	@log_enter('Calculating {a} / {b} ...')
 	@log_return('Result is {ret}.')
 	@log_error('Failed to calc. Error is "{e}".', exc_info=True)
 	def divide(a, b):
 	    return a / b
-	    
+	
+	loggingd.init(loggingd.DEBUG)
+	loggingd.add_console_handler(loggingd.DEBUG)
+	divide(2, 1)
+	
 Specify logging level:
 
 	from loggingd import log_enter, log_return, log_error
@@ -48,6 +57,10 @@ Specify logging level:
 	@log_error('[ERROR] Failed to calc. Error is "{e}".', exc_info=True)
 	def divide(a, b):
 	    return a / b
+	
+	loggingd.init(loggingd.DEBUG)
+	loggingd.add_console_handler(loggingd.DEBUG)
+	divide(2, 1)
 	    
 Conditional logging:
 
@@ -56,6 +69,10 @@ Conditional logging:
 	@log_enter('This is going to fail.', condition='b == 0')
 	def divide(a, b):
 	    return a / b
+	
+	loggingd.init(loggingd.DEBUG)
+	loggingd.add_console_handler(loggingd.DEBUG)
+	divide(2, 0)
 
 Log exit:
 
@@ -64,6 +81,10 @@ Log exit:
 	@log_exit('This is going to log on return and on exception.')
 	def divide(a, b):
 	    return a / b
+	
+	loggingd.init(loggingd.DEBUG)
+	loggingd.add_console_handler(loggingd.DEBUG)
+	divide(2, 1)
 
 Python3 Support
 ===============

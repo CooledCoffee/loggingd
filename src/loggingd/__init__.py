@@ -11,7 +11,6 @@ INFO = logging.INFO
 WARN = logging.WARN
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
-basicConfig = logging.basicConfig
 getLogger = logging.getLogger
 
 disable_module_log = disable_module_log
