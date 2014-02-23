@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from decorated.base.dict import Dict
 from logging import Logger
 import doctest
 import importlib
@@ -7,49 +8,10 @@ import sys
 _MODULE_BLACKLIST = set()
 _PATH_BLACKLIST = set()
 
-class Dict(dict):
-    '''
-    A Dict object is like a dictionary except `obj.foo` can be used
-    in addition to `obj['foo']`.
-    
-    >>> o = Dict(a=1)
-    >>> o.a
-    1
-    >>> o['a']
-    1
-    >>> o.a = 2
-    >>> o['a']
-    2
-    >>> del o.a
-    >>> o.a
-    Traceback (most recent call last):
-    ...
-    AttributeError: 'a'
-    >>> del o.b
-    Traceback (most recent call last):
-    ...
-    AttributeError: 'b'
-    '''
-    def __getattr__(self, key):
-        try:
-            return self[key]
-        except KeyError, k:
-            raise AttributeError(k)
-    
-    def __setattr__(self, key, value): 
-        self[key] = value
-    
-    def __delattr__(self, key):
-        try:
-            del self[key]
-        except KeyError, k:
-            raise AttributeError(k)
-        
 def disable_module_log(module_name):
     global _MODULE_BLACKLIST, _PATH_BLACKLIST
     _MODULE_BLACKLIST.add(module_name)
     _PATH_BLACKLIST = {importlib.import_module(mod).__file__ for mod in _MODULE_BLACKLIST}
-    _PATH_BLACKLIST = {path.rstrip('c') for path in _PATH_BLACKLIST} # replace .pyc with .py
     
 def patch_logging():
     old_log = Logger._log

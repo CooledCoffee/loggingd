@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from decorated import function
+from decorated.base import function
 from loggingd import util
 from loggingd.util import Dict
 from unittest.case import TestCase
-import importlib
 import loggingd
 import os
 
@@ -14,7 +13,7 @@ class ModifyFrameTest(TestCase):
         
     def test_black_frames_on_top(self):
         # set up
-        black_path = os.path.abspath(function.__file__).rstrip('c')
+        black_path = os.path.abspath(function.__file__)
         frame4 = Dict(tb_frame=Dict(f_code=Dict(co_filename='logic module path')),
                 tb_lasti=111,
                 tb_lineno=111,
@@ -40,7 +39,7 @@ class ModifyFrameTest(TestCase):
         
     def test_black_frames_on_bottom(self):
         # set up
-        black_path = os.path.abspath(function.__file__).rstrip('c')
+        black_path = os.path.abspath(function.__file__)
         frame4 = Dict(tb_frame=Dict(f_code=Dict(co_filename=black_path)),
                 tb_lasti=111,
                 tb_lineno=111,
@@ -66,7 +65,7 @@ class ModifyFrameTest(TestCase):
         
     def test_black_frames_in_middle(self):
         # set up
-        black_path = os.path.abspath(function.__file__).rstrip('c')
+        black_path = os.path.abspath(function.__file__)
         frame4 = Dict(tb_frame=Dict(f_code=Dict(co_filename='logic module path')),
                 tb_lasti=111,
                 tb_lineno=111,
