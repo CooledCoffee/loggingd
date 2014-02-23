@@ -1,5 +1,8 @@
 Introduction
 ============
+
+Loggingd is a logging framework based on <a href="https://github.com/CooledCoffee/decorated" target="_blank">decorated</a>
+
 Code without logging:
 
 	def divide(a, b):
@@ -43,3 +46,8 @@ pip install loggingd
 or 
 
 easy_install loggingd
+
+Author
+======
+
+Mengchen LEE: <a href="https://plus.google.com/117704742936410336204" target="_blank">Google Plus</a>, <a href="https://cn.linkedin.com/pub/mengchen-lee/30/8/23a" target="_blank">LinkedIn</a>
