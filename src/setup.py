@@ -16,7 +16,7 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Topic :: System :: Logging',
     ],
-    description='Logging using decorators.',
+    description='Logging framework using decorators.',
     packages=['loggingd'],
     url='https://github.com/CooledCoffee/loggingd/',
     install_requires=[
