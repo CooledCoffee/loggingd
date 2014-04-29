@@ -2,10 +2,6 @@ Installation
 ============
 pip install loggingd
 
-or 
-
-easy_install loggingd
-
 Introduction
 ============
 
