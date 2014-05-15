@@ -2,7 +2,8 @@
 from decorated.base import function
 from decorated.decorators import events
 from loggingd import util
-from loggingd.decorators import LogEnter, LogError, LogExit, LogReturn
+from loggingd.decorators import LogEnter, LogError, LogExit, LogReturn, \
+    LogAndIgnoreError
 from loggingd.util import disable_module_log
 import logging
 
@@ -16,9 +17,10 @@ getLogger = logging.getLogger
 
 disable_module_log = disable_module_log
 log_enter = LogEnter
-log_error = LogError
 log_exit = LogExit
 log_return = LogReturn
+log_error = LogError
+log_and_ignore_error = LogAndIgnoreError
 
 def add_console_handler(level, fmt='%(message)s'):
     handler = logging.StreamHandler()
