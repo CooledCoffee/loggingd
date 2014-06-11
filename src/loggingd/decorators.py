@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-from decorated import Function
+from decorated import WrapperFunction, Function
 import doctest
 import logging
 import re
 
-class Log(Function):
+class Log(WrapperFunction):
     default_level = logging.INFO
     
     def __init__(self, expression, condition='True', **kw):
@@ -33,24 +33,20 @@ class Log(Function):
             logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'))
                 
 class LogEnter(Log):
-    def _call(self, *args, **kw):
+    def _before(self, *args, **kw):
         self._log(None, None, *args, **kw)
-        return super(LogEnter, self)._call(*args, **kw)
     
 class LogExit(Log):
     log_on_return = True
     log_on_error = True
     
-    def _call(self, *args, **kw):
-        try:
-            ret = super(LogExit, self)._call(*args, **kw)
+    def _after(self, ret, error, *args, **kw):
+        if error is None:
             if self.log_on_return:
                 self._log(ret, None, *args, **kw)
-            return ret
-        except Exception as e:
+        else:
             if self.log_on_error:
-                self._log(None, e, *args, **kw)
-            raise
+                self._log(None, error, *args, **kw)
     
 class LogReturn(LogExit):
     log_on_error = False
@@ -59,12 +55,14 @@ class LogError(LogExit):
     log_on_return = False
     default_level = logging.WARN
     
-class LogAndIgnoreError(LogError):
+class LogAndIgnoreError(Log):
+    default_level = logging.WARN
+    
     def _call(self, *args, **kw):
         try:
-            return super(LogAndIgnoreError, self)._call(*args, **kw)
-        except:
-            pass
+            return Function._call(self, *args, **kw)
+        except Exception as e:
+            self._log(None, e, *args, **kw)
 
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
 def _evaluate_message(msg, d):

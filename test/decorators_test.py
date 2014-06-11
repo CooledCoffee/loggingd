@@ -219,7 +219,7 @@ class LogAndIgnoreErrorTest(BaseLoggerTest):
         # verify
         self.assertEqual(1, result)
         self.assertEquals(0, len(self.logs))
-             
+        
     def test_error(self):
         # test
         @LogAndIgnoreError('Id is {id}, error is {e}.', exc_info=True)
