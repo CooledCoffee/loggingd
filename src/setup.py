@@ -20,6 +20,6 @@ setup(
     packages=['loggingd'],
     url='https://github.com/CooledCoffee/loggingd/',
     install_requires=[
-        'decorated >= 1.2.1',
+        'decorated >= 1.5.0',
     ],
 )
