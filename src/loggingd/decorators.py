@@ -55,14 +55,12 @@ class LogError(LogExit):
     log_on_return = False
     default_level = logging.WARN
     
-class LogAndIgnoreError(Log):
-    default_level = logging.WARN
-    
+class LogAndIgnoreError(LogError):
     def _call(self, *args, **kw):
         try:
-            return Function._call(self, *args, **kw)
-        except Exception as e:
-            self._log(None, e, *args, **kw)
+            return super(LogAndIgnoreError, self)._call(*args, **kw)
+        except:
+            pass
 
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
 def _evaluate_message(msg, d):
