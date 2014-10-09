@@ -7,12 +7,12 @@ from loggingd.decorators import LogEnter, LogError, LogExit, LogReturn, \
 from loggingd.util import disable_module_log
 import logging
 
+NOTSET = logging.NOTSET
 DEBUG = logging.DEBUG
 INFO = logging.INFO
 WARN = logging.WARN
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
-NOSET = logging.NOTSET
 getLogger = logging.getLogger
 
 disable_module_log = disable_module_log
