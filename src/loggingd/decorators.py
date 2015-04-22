@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from decorated import WrapperFunction, Function
+from decorated import WrapperFunction
 import doctest
 import logging
 import re
@@ -7,12 +7,6 @@ import re
 class Log(WrapperFunction):
     default_level = logging.INFO
     
-    def __init__(self, expression, condition='True', **kw):
-        super(Log, self).__init__()
-        self._level, self._msg = _parse_expression(expression, self.default_level)
-        self._condition = condition
-        self._extra_kw = kw
-            
     def _evaluate_expressions(self, ret, e, *args, **kw):
         d = self._resolve_args(*args, **kw)
         d['ret'] = ret
@@ -26,6 +20,12 @@ class Log(WrapperFunction):
         else:
             return False, None
     
+    def _init(self, expression, condition='True', **kw):
+        super(Log, self)._init()
+        self._level, self._msg = _parse_expression(expression, self.default_level)
+        self._condition = condition
+        self._extra_kw = kw
+            
     def _log(self, ret, e, *args, **kw):
         condition, msg = self._evaluate_expressions(ret, e, *args, **kw)
         if condition:
