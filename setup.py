@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from distutils.core import setup
+import setuptools
 
 setup(
     name='loggingd',
@@ -17,7 +18,8 @@ setup(
         'Topic :: System :: Logging',
     ],
     description='Logging framework using decorators.',
-    packages=['loggingd'],
+    package_dir={'': 'src'},
+    packages=setuptools.find_packages(where='src'),
     url='https://github.com/CooledCoffee/loggingd/',
     install_requires=[
         'decorated >= 1.5.0',
