@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from loggingd.decorators import Log, LogEnter, LogExit, LogReturn, LogError, \
+from loggingd.decorators import Log, LogEnter, LogReturn, LogError, \
     LogAndIgnoreError
 from loggingd.util import Dict
 from unittest.case import TestCase
@@ -132,34 +132,7 @@ class LogEnterTest(BaseLoggerTest):
         self.assertEquals(1, len(self.logs))
         self.assertEquals(logging.INFO, self.logs[0].level)
         self.assertEquals('bbb', self.logs[0].msg)
- 
-class LogExitTest(BaseLoggerTest):
-    def test_return(self):
-        # test
-        @LogExit('aaa')
-        def _foo(id):
-            return 1
-        ret = _foo(111)
-        
-        # verify
-        self.assertEquals(1, ret)
-        self.assertEquals(1, len(self.logs))
-        self.assertEquals(logging.INFO, self.logs[0].level)
-        self.assertEquals('aaa', self.logs[0].msg)
-         
-    def test_error(self):
-        # test
-        @LogExit('aaa')
-        def _foo(id):
-            raise Exception()
-        with self.assertRaises(Exception):
-            _foo(111)
-            
-        # verify
-        self.assertEquals(1, len(self.logs))
-        self.assertEquals(logging.INFO, self.logs[0].level)
-        self.assertEquals('aaa', self.logs[0].msg)
-             
+
 class LogReturnTest(BaseLoggerTest):
     def test_success(self):
         # test

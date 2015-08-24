@@ -36,24 +36,15 @@ class LogEnter(Log):
     def _before(self, *args, **kw):
         self._log(None, None, *args, **kw)
     
-class LogExit(Log):
-    log_on_return = True
-    log_on_error = True
+class LogReturn(Log):
+    def _after(self, ret, *args, **kw):
+        self._log(ret, None, *args, **kw)
     
-    def _after(self, ret, error, *args, **kw):
-        if error is None:
-            if self.log_on_return:
-                self._log(ret, None, *args, **kw)
-        else:
-            if self.log_on_error:
-                self._log(None, error, *args, **kw)
-    
-class LogReturn(LogExit):
-    log_on_error = False
-    
-class LogError(LogExit):
-    log_on_return = False
+class LogError(Log):
     default_level = logging.WARN
+    
+    def _error(self, error, *args, **kw):
+        self._log(None, error, *args, **kw)
     
 class LogAndIgnoreError(LogError):
     def _call(self, *args, **kw):
