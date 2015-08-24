@@ -4,7 +4,7 @@ import setuptools
 
 setup(
     name='loggingd',
-    version='1.2.0',
+    version='1.2.1',
     author='Mengchen LEE',
     author_email='CooledCoffee@gmail.com',
     classifiers = [
