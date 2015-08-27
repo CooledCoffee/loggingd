@@ -4,7 +4,7 @@ import setuptools
 
 setup(
     name='loggingd',
-    version='1.2.1',
+    version='1.2.2',
     author='Mengchen LEE',
     author_email='CooledCoffee@gmail.com',
     classifiers = [
@@ -18,10 +18,10 @@ setup(
         'Topic :: System :: Logging',
     ],
     description='Logging framework using decorators.',
-    package_dir={'': 'src'},
-    packages=setuptools.find_packages(where='src'),
-    url='https://github.com/CooledCoffee/loggingd/',
     install_requires=[
         'decorated>=1.6.2',
     ],
+    package_dir={'': 'src'},
+    packages=setuptools.find_packages(where='src'),
+    url='https://package-insights.appspot.com/packages/loggingd'
 )
