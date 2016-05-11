@@ -56,7 +56,7 @@ class LogAndIgnoreError(LogError):
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
 def _evaluate_message(msg, d):
     '''
-    >>> from loggingd.util import Dict
+    >>> from decorated.base.dict import Dict
     >>> _evaluate_message('aaa', {})
     'aaa'
     >>> _evaluate_message('Id is {id}.', {'id':1})

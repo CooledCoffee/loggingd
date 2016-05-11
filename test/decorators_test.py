@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+from decorated.base.dict import Dict
 from loggingd.decorators import Log, LogEnter, LogReturn, LogError, \
     LogAndIgnoreError
-from loggingd.util import Dict
 from unittest.case import TestCase
 import logging
 import loggingd

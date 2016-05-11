@@ -35,7 +35,6 @@ def add_file_handler(level, path, fmt='[%(asctime)s] [%(levelname)s] [%(process)
     
 def init(level=logging.INFO):
     logging.getLogger().setLevel(level)
-    util.patch_logging()
     disable_module_log(function.__name__)
     disable_module_log(events.__name__)
     disable_module_log('loggingd.decorators')
