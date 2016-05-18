@@ -13,7 +13,7 @@ class Log(WrapperFunction):
         d['e'] = e
         try:
             condition = eval(self._condition, d)
-        except:
+        except Exception:
             return True, 'Invalid condition: %s.' % self._condition
         if condition:
             return True, _evaluate_message(self._msg, d)
@@ -50,7 +50,7 @@ class LogAndIgnoreError(LogError):
     def _call(self, *args, **kw):
         try:
             return super(LogAndIgnoreError, self)._call(*args, **kw)
-        except:
+        except Exception:
             pass
 
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
@@ -73,7 +73,7 @@ def _evaluate_message(msg, d):
         try:
             value = eval(expression, d)
             return str(value)
-        except:
+        except Exception:
             return '{error:%s}' % expression
     return VARIABLE_TEMPLATE.sub(_evaluate, msg)
     
