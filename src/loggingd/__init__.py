@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
 from decorated.base import function
 from decorated.decorators import events
-from loggingd import util
 from loggingd.decorators import LogEnter, LogError, LogReturn, LogAndIgnoreError
-from loggingd.util import disable_module_log
 import logging
 
 NOTSET = logging.NOTSET
@@ -14,7 +12,6 @@ ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 getLogger = logging.getLogger
 
-disable_module_log = disable_module_log
 log_enter = LogEnter
 log_return = LogReturn
 log_error = LogError
@@ -35,7 +32,4 @@ def add_file_handler(level, path, fmt='[%(asctime)s] [%(levelname)s] [%(process)
     
 def init(level=logging.INFO):
     logging.getLogger().setLevel(level)
-    disable_module_log(function.__name__)
-    disable_module_log(events.__name__)
-    disable_module_log('loggingd.decorators')
     
