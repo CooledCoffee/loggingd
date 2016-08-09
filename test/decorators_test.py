@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from decorated.base.dict import Dict
+from fixtures2 import TestCase
+
+import loggingd
 from loggingd.decorators import Log, LogEnter, LogReturn, LogError, \
     LogAndIgnoreError
-from unittest.case import TestCase
-import logging
-import loggingd
+
 
 def foo(id, name='default name'):
     return id
