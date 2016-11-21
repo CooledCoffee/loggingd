@@ -23,6 +23,7 @@ setup(
     },
     install_requires=[
         'decorated>=1.6.2',
+        'pyyaml>=3.11',
     ],
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
