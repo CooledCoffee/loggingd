@@ -47,11 +47,19 @@ class LogError(Log):
         self._log(None, error, *args, **kw)
     
 class LogAndIgnoreError(LogError):
+    def _init(self, *args, **kw):
+        if 'error_classes' in kw:
+            self._error_classes = kw.pop('error_classes')
+        else:
+            self._error_classes = Exception
+        super(LogAndIgnoreError, self)._init(*args, **kw)
+
     def _call(self, *args, **kw):
         try:
             return super(LogAndIgnoreError, self)._call(*args, **kw)
-        except Exception:
-            pass
+        except Exception as e:
+            if not isinstance(e, self._error_classes):
+                raise
 
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
 def _evaluate_message(msg, d):
