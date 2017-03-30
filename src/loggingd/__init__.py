@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+DEFAULT_FORMAT = '[%(asctime)s] [%(levelname)s] [%(process)d:%(threadName)s] [%(name)s:%(funcName)s:%(lineno)d]\n%(message)s'
+
 import logging
 
 from loggingd import util
