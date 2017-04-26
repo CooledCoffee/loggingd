@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import doctest
 import importlib
 import logging
 import sys
+from logging import FileHandler, Formatter, StreamHandler
+
+import yaml
 
 import loggingd
-import yaml
-from logging import StreamHandler, FileHandler, Formatter
 
 
 def add_console_handler(level, fmt=loggingd.DEFAULT_FORMAT):
@@ -23,6 +23,8 @@ def add_file_handler(level, path, fmt=loggingd.DEFAULT_FORMAT):
     logger.addHandler(handler)
 
 def init(level=logging.INFO):
+    from loggingd import session
+    session.patch()
     logging.getLogger().setLevel(level)
 
 def yaml_config(config):
@@ -62,6 +64,3 @@ def _obj_from_path(path):
     mod, attr = path.rsplit('.', 1)
     mod = importlib.import_module(mod)
     return getattr(mod, attr)
-
-if __name__ == '__main__':
-    doctest.testmod()
