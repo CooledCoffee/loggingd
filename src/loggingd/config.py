@@ -2,29 +2,28 @@
 import importlib
 import logging
 import sys
-from logging import FileHandler, Formatter, StreamHandler
+from logging import FileHandler, StreamHandler
 
 import yaml
 
 import loggingd
+from loggingd.session import LoggingdFormatter
 
 
 def add_console_handler(level, fmt=loggingd.DEFAULT_FORMAT):
     handler = StreamHandler()
     handler.setLevel(level)
-    handler.setFormatter(Formatter(fmt))
+    handler.setFormatter(LoggingdFormatter(fmt))
     logging.getLogger().addHandler(handler)
 
 def add_file_handler(level, path, fmt=loggingd.DEFAULT_FORMAT):
     logger = logging.getLogger()
     handler = FileHandler(path)
     handler.setLevel(level)
-    handler.setFormatter(Formatter(fmt))
+    handler.setFormatter(LoggingdFormatter(fmt))
     logger.addHandler(handler)
 
 def init(level=logging.INFO):
-    from loggingd import session
-    session.patch()
     logging.getLogger().setLevel(level)
 
 def yaml_config(config):
@@ -52,12 +51,12 @@ def _create_handler(config):
         cls = _obj_from_path(type_)
         handler = cls(**config)
     handler.setLevel(level)
-    handler.setFormatter(Formatter(fmt))
+    handler.setFormatter(LoggingdFormatter(fmt))
     return handler
 
 def _obj_from_path(path):
     '''
-    >>> obj = _obj_from_path('loggingd.util._obj_from_path')
+    >>> obj = _obj_from_path('loggingd.config._obj_from_path')
     >>> obj.__name__
     '_obj_from_path'
     '''
