@@ -8,19 +8,19 @@ class Log(WrapperFunction):
     default_level = logging.INFO
     
     def _evaluate_expressions(self, ret, e, *args, **kw):
-        d = self._resolve_args(*args, **kw)
-        d['ret'] = ret
-        d['e'] = e
+        arg_dict = self._resolve_args(*args, **kw)
+        arg_dict['ret'] = ret
+        arg_dict['e'] = e
         try:
-            condition = eval(self._condition, d)
+            condition = eval(self._condition, arg_dict) # pylint: disable=eval-used
         except Exception:
             return True, 'Invalid condition: %s.' % self._condition
         if condition:
-            return True, _evaluate_message(self._msg, d)
+            return True, _evaluate_message(self._msg, arg_dict)
         else:
             return False, None
     
-    def _init(self, expression, condition='True', **kw):
+    def _init(self, expression, condition='True', **kw): # pylint: disable=arguments-differ
         super(Log, self)._init()
         self._level, self._msg = _parse_expression(expression, self.default_level)
         self._condition = condition
@@ -47,7 +47,7 @@ class LogError(Log):
         self._log(None, error, *args, **kw)
     
 class LogAndIgnoreError(LogError):
-    def _init(self, *args, **kw):
+    def _init(self, *args, **kw): # pylint: disable=arguments-differ
         if 'error_classes' in kw:
             self._error_classes = kw.pop('error_classes')
         else:
@@ -62,7 +62,7 @@ class LogAndIgnoreError(LogError):
                 raise
 
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
-def _evaluate_message(msg, d):
+def _evaluate_message(msg, args):
     '''
     >>> from decorated.base.dict import Dict
     >>> _evaluate_message('aaa', {})
@@ -79,7 +79,7 @@ def _evaluate_message(msg, d):
     def _evaluate(matcher):
         expression = matcher.group(1)
         try:
-            value = eval(expression, d)
+            value = eval(expression, args) # pylint: disable=eval-used
             return str(value)
         except Exception:
             return '{error:%s}' % expression

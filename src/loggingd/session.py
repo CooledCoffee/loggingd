@@ -13,15 +13,16 @@ class LoggingSession(six.with_metaclass(ContextMeta)):
 
 class LoggingdFormatter(Formatter):
     def format(self, record):
+        # pylint: disable=invalid-name
         record.message = record.getMessage()
         if self.usesTime():
             record.asctime = self.formatTime(record, self.datefmt)
         try:
-            d = defaultdict(str, **record.__dict__)
+            fields = defaultdict(str, **record.__dict__)
             session = LoggingSession.current()
             if session is not None:
-                d.update(session.fields)
-            s = self._fmt % d
+                fields.update(session.fields)
+            s = self._fmt % fields
         except UnicodeDecodeError as e:
             # Issue 25664. The logger name may be Unicode. Try again ...
             try:

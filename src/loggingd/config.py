@@ -6,17 +6,18 @@ from logging import FileHandler, StreamHandler
 
 import yaml
 
-import loggingd
 from loggingd.session import LoggingdFormatter
 
+DEFAULT_FORMAT = '[%(asctime)s] [%(levelname)s] [%(process)d:%(threadName)s] ' \
+                 '[%(name)s:%(funcName)s:%(lineno)d]\n%(message)s'
 
-def add_console_handler(level, fmt=loggingd.DEFAULT_FORMAT):
+def add_console_handler(level, fmt=DEFAULT_FORMAT):
     handler = StreamHandler()
     handler.setLevel(level)
     handler.setFormatter(LoggingdFormatter(fmt))
     logging.getLogger().addHandler(handler)
 
-def add_file_handler(level, path, fmt=loggingd.DEFAULT_FORMAT):
+def add_file_handler(level, path, fmt=DEFAULT_FORMAT):
     logger = logging.getLogger()
     handler = FileHandler(path)
     handler.setLevel(level)
@@ -40,7 +41,7 @@ def _create_handler(config):
         level = getattr(logging, level)
     except AttributeError:
         raise Exception('Level "%s" is undefined.' % level)
-    fmt = config.pop('format', loggingd.DEFAULT_FORMAT)
+    fmt = config.pop('format', DEFAULT_FORMAT)
     if type_ == 'stdout':
         handler = StreamHandler(stream=sys.stdout)
     elif type_ == 'stderr':
