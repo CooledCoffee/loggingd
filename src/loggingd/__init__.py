@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from logging import NOTSET, DEBUG, INFO, WARN, ERROR, CRITICAL, getLogger
 from loggingd import config
 from loggingd.config import DEFAULT_FORMAT, add_console_handler, add_file_handler, init, yaml_config
 from loggingd.decorators import LogAndIgnoreError, LogEnter, LogError, LogReturn
