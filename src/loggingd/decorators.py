@@ -6,6 +6,11 @@ import re
 
 class Log(WrapperFunction):
     default_level = logging.INFO
+
+    def _decorate(self, func):
+        super(Log, self)._decorate(func)
+        self._logger = self._logger or logging.getLogger(self.__module__)
+        return self
     
     def _evaluate_expressions(self, ret, e, *args, **kw):
         arg_dict = self._resolve_args(*args, **kw)
@@ -20,17 +25,17 @@ class Log(WrapperFunction):
         else:
             return False, None
     
-    def _init(self, expression, condition='True', **kw): # pylint: disable=arguments-differ
+    def _init(self, expression, condition='True', logger=None, **kw): # pylint: disable=arguments-differ
         super(Log, self)._init()
         self._level, self._msg = _parse_expression(expression, self.default_level)
         self._condition = condition
+        self._logger = logger
         self._extra_kw = kw
-            
+
     def _log(self, ret, e, *args, **kw):
         condition, msg = self._evaluate_expressions(ret, e, *args, **kw)
         if condition:
-            logger = logging.getLogger(self.__module__)
-            logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'))
+            self._logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'))
                 
 class LogEnter(Log):
     def _before(self, *args, **kw):
