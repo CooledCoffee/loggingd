@@ -60,8 +60,8 @@ class BaseLoggerTest(TestCase):
         self._old_get_logger = logging.getLogger
         self.logs = logs = []
         class _Logger(object):
-            def log(self, level, msg, exc_info=None):
-                logs.append(Dict(level=level, msg=msg, exc_info=exc_info))
+            def log(self, level, msg, **kwargs):
+                logs.append(Dict(level=level, msg=msg, **kwargs))
         def _get_logger(name):
             return _Logger()
         logging.getLogger = _get_logger

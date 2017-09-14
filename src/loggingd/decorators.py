@@ -35,7 +35,9 @@ class Log(WrapperFunction):
     def _log(self, ret, e, *args, **kw):
         condition, msg = self._evaluate_expressions(ret, e, *args, **kw)
         if condition:
-            self._logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'))
+            extra = kw.get('extra', {})
+            extra['lineno'] = self._func.__code__.co_firstlineno
+            self._logger.log(self._level, msg, exc_info=self._extra_kw.get('exc_info'), extra=extra)
                 
 class LogEnter(Log):
     def _before(self, *args, **kw):
