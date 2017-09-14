@@ -2,11 +2,9 @@
 import importlib
 import logging
 import sys
-from logging import FileHandler, StreamHandler
+from logging import FileHandler, Formatter, StreamHandler
 
 import yaml
-
-from loggingd.session import LoggingdFormatter
 
 DEFAULT_FORMAT = '[%(asctime)s] [%(levelname)s] [%(process)d:%(threadName)s] ' \
                  '[%(name)s:%(funcName)s:%(lineno)d]\n%(message)s'
@@ -14,14 +12,14 @@ DEFAULT_FORMAT = '[%(asctime)s] [%(levelname)s] [%(process)d:%(threadName)s] ' \
 def add_console_handler(level, fmt=DEFAULT_FORMAT):
     handler = StreamHandler()
     handler.setLevel(level)
-    handler.setFormatter(LoggingdFormatter(fmt))
+    handler.setFormatter(Formatter(fmt))
     logging.getLogger().addHandler(handler)
 
 def add_file_handler(level, path, fmt=DEFAULT_FORMAT):
     logger = logging.getLogger()
     handler = FileHandler(path)
     handler.setLevel(level)
-    handler.setFormatter(LoggingdFormatter(fmt))
+    handler.setFormatter(Formatter(fmt))
     logger.addHandler(handler)
 
 def init(level=logging.INFO):
@@ -52,7 +50,7 @@ def _create_handler(config):
         cls = _obj_from_path(type_)
         handler = cls(**config)
     handler.setLevel(level)
-    handler.setFormatter(LoggingdFormatter(fmt))
+    handler.setFormatter(Formatter(fmt))
     return handler
 
 def _obj_from_path(path):
