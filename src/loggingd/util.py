@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from logging import LogRecord, Logger
+from collections import defaultdict
+from logging import Formatter, LogRecord, Logger
 
 import six
 from decorated.base.context import ContextMeta
@@ -35,3 +36,9 @@ def patch():
             rv.__dict__.update(extra)
         return rv
     Logger.makeRecord = _makeRecord
+
+    original_format = Formatter.format
+    def _format(self, record):
+        record.__dict__ = defaultdict(str, record.__dict__)
+        return original_format(self, record)
+    Formatter.format = _format
