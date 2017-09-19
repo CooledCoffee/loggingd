@@ -209,11 +209,12 @@ class LogAndIgnoreErrorTest(BaseLoggerTest):
         self.assertEquals(logging.WARN, self.logs[0].level)
         self.assertEquals('Id is 111, error is aaa.', self.logs[0].msg)
 
-    def test_errors(self):
+    def test_with_error_classes(self):
         # test
         @LogAndIgnoreError('aaa', error_classes=(ArithmeticError,))
         def _foo(id):
             raise TypeError()
 
         with self.assertRaises(TypeError):
-            result = _foo(111)
+            _foo(111)
+        self.assertEquals(0, len(self.logs))

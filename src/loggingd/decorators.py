@@ -5,7 +5,7 @@ import logging
 import re
 
 class Log(WrapperFunction):
-    default_level = logging.INFO
+    level = logging.INFO
 
     def _decorate(self, func):
         super(Log, self)._decorate(func)
@@ -27,7 +27,7 @@ class Log(WrapperFunction):
     
     def _init(self, expression, condition='True', logger=None, **kw): # pylint: disable=arguments-differ
         super(Log, self)._init()
-        self._level, self._msg = _parse_expression(expression, self.default_level)
+        self._level, self._msg = _parse_expression(expression, self.level)
         self._condition = condition
         self._logger = logger
         self._extra_kw = kw
@@ -48,24 +48,25 @@ class LogReturn(Log):
         self._log(ret, None, *args, **kw)
     
 class LogError(Log):
-    default_level = logging.WARN
+    level = logging.WARN
     
     def _error(self, error, *args, **kw):
         self._log(None, error, *args, **kw)
     
-class LogAndIgnoreError(LogError):
+class LogAndIgnoreError(Log):
+    level = logging.WARN
+
     def _init(self, *args, **kw): # pylint: disable=arguments-differ
-        if 'error_classes' in kw:
-            self._error_classes = kw.pop('error_classes')
-        else:
-            self._error_classes = Exception
+        self._error_classes = kw.pop('error_classes', Exception)
         super(LogAndIgnoreError, self)._init(*args, **kw)
 
     def _call(self, *args, **kw):
         try:
             return super(LogAndIgnoreError, self)._call(*args, **kw)
         except Exception as e:
-            if not isinstance(e, self._error_classes):
+            if isinstance(e, self._error_classes):
+                self._log(None, e, *args, **kw)
+            else:
                 raise
 
 VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
