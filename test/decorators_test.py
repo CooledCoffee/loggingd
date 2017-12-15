@@ -42,10 +42,10 @@ class EvaluateExpressions(TestCase):
         self.assertEquals('aaa 111 bbb', msg)
         
     def test_bad_condition(self):
-        decorated = Log('aaa', '!@#$%')(foo)
+        decorated = Log('aaa', 'a + b')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertTrue(condition)
-        self.assertEquals('Invalid condition: !@#$%.', msg)
+        self.assertEquals('Bad condition: a + b.', msg)
         
     def test_bad_msg(self):
         decorated = Log('aaa {bbb} ccc')(foo)

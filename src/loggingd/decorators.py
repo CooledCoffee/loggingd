@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
-from decorated import WrapperFunction
-import doctest
 import logging
 import re
+
+from decorated import WrapperFunction
+from decorated.base.expression import Expression
+from decorated.base.template import Template
+
 
 class Log(WrapperFunction):
     level = logging.INFO
@@ -17,18 +20,19 @@ class Log(WrapperFunction):
         arg_dict['ret'] = ret
         arg_dict['e'] = e
         try:
-            condition = eval(self._condition, arg_dict) # pylint: disable=eval-used
+            condition = self._condition(**arg_dict)
         except Exception:
-            return True, 'Invalid condition: %s.' % self._condition
+            return True, 'Bad condition: %s.' % self._condition
         if condition:
-            return True, _evaluate_message(self._msg, arg_dict)
+            return True, self._msg(**arg_dict)
         else:
             return False, None
     
-    def _init(self, expression, condition='True', logger=None, **kw): # pylint: disable=arguments-differ
+    def _init(self, message, condition='True', logger=None, **kw): # pylint: disable=arguments-differ
         super(Log, self)._init()
-        self._level, self._msg = _parse_expression(expression, self.level)
-        self._condition = condition
+        self._level, self._msg = _parse_expression(message, self.level)
+        self._msg = Template(self._msg)
+        self._condition = condition if callable(condition) else Expression(condition)
         self._logger = logger
         self._extra_kw = kw
 
@@ -68,32 +72,8 @@ class LogAndIgnoreError(Log):
                 self._log(None, e, *args, **kw)
             else:
                 raise
-
-VARIABLE_TEMPLATE = re.compile('\\{(.+?)\\}')
-def _evaluate_message(msg, args):
-    '''
-    >>> from decorated.base.dict import Dict
-    >>> _evaluate_message('aaa', {})
-    'aaa'
-    >>> _evaluate_message('Id is {id}.', {'id':1})
-    'Id is 1.'
-    >>> _evaluate_message('Id is {user.id}.', {'user':Dict(id=1)})
-    'Id is 1.'
-    >>> _evaluate_message('Id is {user.id}.', {'user':Dict(id=1)})
-    'Id is 1.'
-    >>> _evaluate_message('Id is {!@#$%}.', {})
-    'Id is {error:!@#$%}.'
-    '''
-    def _evaluate(matcher):
-        expression = matcher.group(1)
-        try:
-            value = eval(expression, args) # pylint: disable=eval-used
-            return str(value)
-        except Exception:
-            return '{error:%s}' % expression
-    return VARIABLE_TEMPLATE.sub(_evaluate, msg)
     
-LEVEL_MAPPING = {
+_LEVEL_MAPPING = {
     'DEBUG' : logging.DEBUG,
     'INFO' : logging.INFO,
     'WARN' : logging.WARN,
@@ -105,8 +85,8 @@ LEVEL_MAPPING = {
     'E' : logging.ERROR,
     'C' : logging.CRITICAL,
 }
-MESSAGE_TEMPLATE = re.compile('\\[(\\w+)\\](.*)')
-def _parse_expression(expression, default_level):
+_MESSAGE_TEMPLATE = re.compile('\\[(\\w+)\\] (.*)')
+def _parse_expression(message, default_level):
     '''
     >>> _parse_expression('aaa', logging.INFO)
     (20, 'aaa')
@@ -117,15 +97,11 @@ def _parse_expression(expression, default_level):
     >>> _parse_expression('[UNKNOWN] aaa', logging.INFO)
     (30, 'aaa')
     '''
-    match = MESSAGE_TEMPLATE.match(expression)
+    match = _MESSAGE_TEMPLATE.match(message)
     if not match:
-        return default_level, expression.strip()
+        return default_level, message
     
     level, msg = match.groups()
-    level = LEVEL_MAPPING.get(level.upper(), logging.WARN)
-    msg = msg.strip()
+    level = _LEVEL_MAPPING.get(level.upper(), logging.WARN)
     return level, msg
-    
-if __name__ == '__main__':
-    doctest.testmod()
     
