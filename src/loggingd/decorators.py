@@ -22,13 +22,14 @@ class Log(WrapperFunction):
         try:
             condition = self._condition(**arg_dict)
         except Exception:
-            return True, 'Bad condition: %s.' % self._condition
+            self._logger.warn('Failed to evaluate logging condition.', exc_info=True)
+            condition = True
         if condition:
             return True, self._msg(**arg_dict)
         else:
             return False, None
     
-    def _init(self, message, condition='True', logger=None, **kw): # pylint: disable=arguments-differ
+    def _init(self, message, condition=Expression('True'), logger=None, **kw): # pylint: disable=arguments-differ
         super(Log, self)._init()
         self._level, self._msg = _parse_expression(message, self.level)
         self._msg = Template(self._msg)

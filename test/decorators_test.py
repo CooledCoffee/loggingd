@@ -45,7 +45,7 @@ class EvaluateExpressions(TestCase):
         decorated = Log('aaa', 'a + b')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
         self.assertTrue(condition)
-        self.assertEquals('Bad condition: a + b.', msg)
+        self.assertEquals('aaa', msg)
         
     def test_bad_msg(self):
         decorated = Log('aaa {bbb} ccc')(foo)
