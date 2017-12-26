@@ -4,9 +4,8 @@ import setuptools
 
 setup(
     name='loggingd',
-    version='1.4',
+    version='1.4.1',
     author='Mengchen LEE',
-    author_email='CooledCoffee@gmail.com',
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
