@@ -2,17 +2,19 @@
 import logging
 
 from decorated.base.dict import Dict
-from fixtures2 import TestCase
 
 import loggingd
 from loggingd.decorators import Log, LogEnter, LogReturn, LogError, \
     LogAndIgnoreError
+from testutil import LoggingdTest
 
 
+# noinspection PyUnusedLocal
 def foo(id, name='default name'):
     return id
-        
-class EvaluateExpressions(TestCase):
+
+
+class EvaluateExpressions(LoggingdTest):
     def test_no_condition(self):
         decorated = Log('aaa')(foo)
         condition, msg = decorated._evaluate_expressions(None, None, 1, name='my name')
@@ -53,7 +55,9 @@ class EvaluateExpressions(TestCase):
         self.assertTrue(condition)
         self.assertEquals('aaa {error:bbb} ccc', msg)
         
-class BaseLoggerTest(TestCase):
+
+class BaseLoggerTest(LoggingdTest):
+    # noinspection PyAttributeOutsideInit
     def setUp(self):
         super(BaseLoggerTest, self).setUp()
         loggingd.init()
@@ -62,6 +66,7 @@ class BaseLoggerTest(TestCase):
         class _Logger(object):
             def log(self, level, msg, **kwargs):
                 logs.append(Dict(level=level, msg=msg, **kwargs))
+        # noinspection PyUnusedLocal
         def _get_logger(name):
             return _Logger()
         logging.getLogger = _get_logger
@@ -70,6 +75,7 @@ class BaseLoggerTest(TestCase):
         logging.getLogger = self._old_get_logger
         super(BaseLoggerTest, self).tearDown()
         
+
 class LogTest(BaseLoggerTest):
     def test_simple(self):
         # test
@@ -86,7 +92,7 @@ class LogTest(BaseLoggerTest):
         decorated = Log('{id}', exc_info=True)(foo)
         try:
             raise Exception()
-        except:
+        except Exception:
             decorated._log(None, None, 1)
                 
         # verify
@@ -95,6 +101,7 @@ class LogTest(BaseLoggerTest):
         self.assertEquals('1', self.logs[0].msg)
         self.assertTrue(self.logs[0].exc_info)
          
+
 class LogEnterTest(BaseLoggerTest):
     def test_simple(self):
         # test
@@ -125,6 +132,7 @@ class LogEnterTest(BaseLoggerTest):
              
     def test_conditional(self):
         # test
+        # noinspection PyUnusedLocal
         @LogEnter('aaa', 'id==111')
         @LogEnter('bbb', 'id==222')
         def _foo(id):
@@ -136,9 +144,11 @@ class LogEnterTest(BaseLoggerTest):
         self.assertEquals(logging.INFO, self.logs[0].level)
         self.assertEquals('bbb', self.logs[0].msg)
 
+
 class LogReturnTest(BaseLoggerTest):
     def test_success(self):
         # test
+        # noinspection PyUnusedLocal
         @LogReturn('Id is {id}, return is {ret}.')
         def _foo(id):
             return 1
@@ -151,6 +161,7 @@ class LogReturnTest(BaseLoggerTest):
              
     def test_error(self):
         # test
+        # noinspection PyUnusedLocal
         @LogReturn('aaa')
         def _foo(id):
             raise Exception()
@@ -160,9 +171,11 @@ class LogReturnTest(BaseLoggerTest):
         # verify
         self.assertEquals(0, len(self.logs))
              
+
 class LogErrorTest(BaseLoggerTest):
     def test_success(self):
         # test
+        # noinspection PyUnusedLocal
         @LogError('aaa')
         def _foo(id):
             return 1
@@ -173,6 +186,7 @@ class LogErrorTest(BaseLoggerTest):
              
     def test_error(self):
         # test
+        # noinspection PyUnusedLocal
         @LogError('Id is {id}, error is {e}.', exc_info=True)
         def _foo(id):
             raise Exception('aaa')
@@ -184,9 +198,11 @@ class LogErrorTest(BaseLoggerTest):
         self.assertEquals(logging.WARN, self.logs[0].level)
         self.assertEquals('Id is 111, error is aaa.', self.logs[0].msg)
         
+
 class LogAndIgnoreErrorTest(BaseLoggerTest):
     def test_success(self):
         # test
+        # noinspection PyUnusedLocal
         @LogAndIgnoreError('aaa')
         def _foo(id):
             return 1
@@ -198,6 +214,7 @@ class LogAndIgnoreErrorTest(BaseLoggerTest):
         
     def test_error(self):
         # test
+        # noinspection PyUnusedLocal
         @LogAndIgnoreError('Id is {id}, error is {e}.', exc_info=True)
         def _foo(id):
             raise Exception('aaa')
@@ -211,6 +228,7 @@ class LogAndIgnoreErrorTest(BaseLoggerTest):
 
     def test_with_error_classes(self):
         # test
+        # noinspection PyUnusedLocal
         @LogAndIgnoreError('aaa', error_classes=(ArithmeticError,))
         def _foo(id):
             raise TypeError()

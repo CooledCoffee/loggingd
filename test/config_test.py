@@ -2,14 +2,15 @@
 from fixtures import TempDir
 from logging import StreamHandler, FileHandler, Handler
 
-from fixtures2 import TestCase
-
 from loggingd import config
+from testutil import LoggingdTest
+
 
 class TestHandler(Handler):
     pass
 
-class CreateHandlerTest(TestCase):
+
+class CreateHandlerTest(LoggingdTest):
     def test_stdout(self):
         config_ = {
             'type': 'stdout',

@@ -18,7 +18,10 @@ setup(
     ],
     description='Logging framework using decorators.',
     extras_require={
-        'test': ['fixtures2>=0.1.7'],
+        'test': [
+            'fixtures>=3.0.0',
+            'fixtures2>=0.1.7',
+        ],
     },
     install_requires=[
         'decorated>=1.6.2',
